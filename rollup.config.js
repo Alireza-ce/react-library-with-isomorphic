@@ -3,10 +3,15 @@ import resolve from '@rollup/plugin-node-resolve';
 import external from "rollup-plugin-peer-deps-external";
 import typescript from "@rollup/plugin-typescript";
 import babel from 'rollup-plugin-babel';
+import replace from '@rollup/plugin-replace';
 import scss from 'rollup-plugin-scss';
-
+import path from "path";
+import glob from 'glob';
+import generatePackageJson from 'rollup-plugin-generate-package-json';
 
 const input = "./src/index.ts";
+
+const inputSrcs = [...glob.sync('./src/components/*/').map((el) => `./src/components/${path.parse(el).name}`)];
 
 const extensions = ['.js', '.jsx', '.ts', '.tsx'];
 
@@ -18,8 +23,69 @@ const babelConfig = {
   presets: ['@babel/env', '@babel/preset-react'],
 };
 
+const plugins = [
+    babel(babelConfig),
+    replace({
+        preferBuiltins: true,
+        preventAssignment: true,
+    }),
+    external(),
+    scss(),
+    resolve(),
+    commonjs({
+        include: 'node_modules/**',
+        // left-hand side can be an absolute path, a path
+        // relative to the current directory, or the name
+        // of a module in node_modules
+        namedExports: {
+            'node_modules/react/index.js': [
+                'cloneElement',
+                'createContext',
+                'Component',
+                'createElement'
+            ],
+            'node_modules/react-dom/index.js': ['render', 'hydrate'],
+            'node_modules/react-is/index.js': [
+                'isElement',
+                'isValidElementType',
+                'ForwardRef',
+                'Memo',
+                'isFragment'
+            ]
+        }
+    }),
+    typescript({ tsconfig: "./tsconfig.json" }),
+    injectStyleFunctions(),
+]
+
+const subFolderPlugins = (folderName) => [
+    ...plugins,
+    generatePackageJson({
+        baseContents: {
+            name: `${'namet'}/${folderName}`,
+            private: true,
+            main: '../cjs/index.js',
+            module: './index.js',
+            types: './index.d.ts',
+        },
+    }),
+];
+const folderBuilds = inputSrcs.map((folder) => {
+    let outPut = folder.replace('./src','./')
+    return {
+        input: `${folder}/index.ts`,
+        output: {
+            file: `lib/esm/${outPut}/index.js`,
+            sourcemap: true,
+            exports: 'named',
+            format: 'esm',
+        },
+        plugins: subFolderPlugins(folder),
+        external: ['react', 'react-dom'],
+    };
+});
+
 export default [
-  // CommonJS
   {
     input,
     output: [{
@@ -31,39 +97,17 @@ export default [
     file: 'lib/esm/index.es.js',
     format: "esm",
     sourcemap: true,
-    }],
+    }
+    ],
     plugins: [
-      babel(babelConfig),
-      external(),
-      scss(),
-      resolve(),
-      commonjs({
-            include: 'node_modules/**',
-            // left-hand side can be an absolute path, a path
-            // relative to the current directory, or the name
-            // of a module in node_modules
-            namedExports: {
-                'node_modules/react/index.js': [
-                    'cloneElement',
-                    'createContext',
-                    'Component',
-                    'createElement'
-                ],
-                'node_modules/react-dom/index.js': ['render', 'hydrate'],
-                'node_modules/react-is/index.js': [
-                    'isElement',
-                    'isValidElementType',
-                    'ForwardRef',
-                    'Memo',
-                    'isFragment'
-                ]
-            }
-        }),
-      typescript({ tsconfig: "./tsconfig.json" }),
-      injectStyleFunctions(),
+        ...plugins
     ]
   },
+    ...folderBuilds,
+
 ];
+
+
 
 function injectStyleFunctions() {
   return {
