@@ -21,6 +21,7 @@ const babelConfig = {
   runtimeHelpers: true,
   exclude: /node_modules/,
   presets: ['@babel/env', '@babel/preset-react'],
+  plugins:['babel-plugin-typescript-to-proptypes']
 };
 
 const plugins = [
@@ -109,7 +110,6 @@ export default [
   //   ]
   // },
     ...folderBuilds,
-
 ];
 
 
