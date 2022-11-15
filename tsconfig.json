@@ -2,11 +2,12 @@
   "compilerOptions": {
     "noEmit": false,
     "declaration": true,
+    "declarationDir": "lib",
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "sourceMap": true,
-    "outDir": "./",
+    "outDir": "lib",
     "baseUrl": "./",
     "paths": {},
     "allowJs": true,
@@ -21,7 +22,6 @@
     "lib": ["dom", "dom.iterable", "esnext"],
     "jsx": "react",
     "downlevelIteration": true
-
   },
   "include": ["./**/*.d.ts", "./**/*.ts", "./**/*.tsx", "./**/*.json"],
   "exclude": ["node_modules","lib"]

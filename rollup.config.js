@@ -1,8 +1,8 @@
 import commonjs from "rollup-plugin-commonjs";
 import resolve from '@rollup/plugin-node-resolve';
 import external from "rollup-plugin-peer-deps-external";
-import typescript from "@rollup/plugin-typescript";
 import babel from 'rollup-plugin-babel';
+import typescript from 'rollup-plugin-typescript2';
 import replace from '@rollup/plugin-replace';
 import scss from 'rollup-plugin-scss';
 import path from "path";
@@ -24,7 +24,6 @@ const babelConfig = {
 };
 
 const plugins = [
-    babel(babelConfig),
     replace({
         preferBuiltins: true,
         preventAssignment: true,
@@ -56,7 +55,12 @@ const plugins = [
             ]
         }
     }),
-    typescript({ tsconfig: "./tsconfig.json" }),
+    typescript({
+        tsconfig: './tsconfig.json',
+        useTsconfigDeclarationDir: true,
+    }),
+    babel(babelConfig),
+
 ]
 
 const subFolderPlugins = (folderName) => [
@@ -87,23 +91,23 @@ const folderBuilds = inputSrcs.map((folder) => {
 });
 
 export default [
-  {
-    input,
-    output: [{
-      file: 'lib/cjs/index.js',
-      format: "cjs",
-      sourcemap: true
-    },
-    {
-    file: 'lib/esm/index.es.js',
-    format: "esm",
-    sourcemap: true,
-    }
-    ],
-    plugins: [
-        ...plugins
-    ]
-  },
+  // {
+  //   input,
+  //   output: [{
+  //     file: 'lib/cjs/index.js',
+  //     format: "cjs",
+  //     sourcemap: true
+  //   },
+  //   {
+  //   file: 'lib/esm/index.es.js',
+  //   format: "esm",
+  //   sourcemap: true,
+  //   }
+  //   ],
+  //   plugins: [
+  //       ...plugins
+  //   ]
+  // },
     ...folderBuilds,
 
 ];
