@@ -1,0 +1,7 @@
+{
+  "sideEffects": false,
+  "internal": true,
+  "main": "./index.ts",
+  "module": "../../dist/components/Chip.js",
+  "types": "../../dist/components/Chip/index.d.ts"
+}

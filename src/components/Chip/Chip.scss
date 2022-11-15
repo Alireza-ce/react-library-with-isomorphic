@@ -1,0 +1,27 @@
+.chip {
+  &-container {
+    padding: 6px 20px;
+    border-radius: 5px;
+    display: flex;
+    align-items: flex-start;
+    text-align: right;
+    justify-content: center;
+    border: 1px solid transparent;
+    font-size: 14px;
+    line-height: 20px;
+    color: #545454;
+    background: #f5f5f5;
+    cursor: pointer;
+    user-select: none;
+
+    &.disabled {
+      cursor: initial;
+      opacity: 0.5;
+    }
+
+    &.selected {
+      border-color: #2266f4;
+      background-color: rgba(34, 102, 244, 0.1);
+    }
+  }
+}
