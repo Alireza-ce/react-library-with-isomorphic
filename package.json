@@ -1,6 +1,6 @@
 {
   "name": "@react-components-library/react-sample-components-library",
-  "version": "0.0.3",
+  "version": "0.0.20",
   "description": "",
   "main": "lib/cjs/index.js",
   "module": "lib/esm/index.es.js",
@@ -20,13 +20,19 @@
   "author": "",
   "license": "ISC",
   "peerDependencies": {
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "isomorphic-style-loader": "5.3.2",
+    "react": "17.0.2",
+    "react-dom": "17.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.5.5",
+    "@babel/plugin-transform-typescript": "^7.20.2",
     "@babel/preset-env": "^7.5.5",
     "@babel/preset-react": "^7.0.0",
+    "@mui/icons-material": "^5.8.4",
+    "@mui/lab": "^5.0.0-alpha.84",
+    "@mui/material": "^5.8.4",
+    "@mui/styles": "^5.8.0",
     "@rollup/plugin-babel": "^5.3.1",
     "@rollup/plugin-commonjs": "21.1.0",
     "@rollup/plugin-image": "^2.1.1",
@@ -38,11 +44,9 @@
     "babel-plugin-module-resolver": "^3.2.0",
     "babel-plugin-typescript-to-proptypes": "^2.0.0",
     "glob": "^7.1.4",
-    "isomorphic-style-loader": "^5.1.0",
     "jest": "^24.8.0",
     "path": "^0.12.7",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
+    "react-bootstrap": "^2.6.0",
     "react-is": "^18.2.0",
     "react-styleguidist": "^9.1.13",
     "rollup": "^2.70.2",
@@ -56,13 +60,8 @@
     "rollup-plugin-styles": "^3.0.3",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "0.31.2",
+    "rollup-plugin-visualizer": "^5.8.3",
     "sass": "^1.53.0",
     "typescript": "^4.8.4"
-  },
-  "dependencies": {
-    "@mui/icons-material": "^5.8.4",
-    "@mui/lab": "^5.0.0-alpha.84",
-    "@mui/material": "^5.8.4",
-    "@mui/styles": "^5.8.0"
   }
 }

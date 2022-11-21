@@ -16,12 +16,11 @@ const inputSrcs = [...glob.sync('./src/components/*/').map((el) => `./src/compon
 const extensions = ['.js', '.jsx', '.ts', '.tsx'];
 
 const babelConfig = {
-  babelrc: false,
-  extensions,
-  runtimeHelpers: true,
-  exclude: /node_modules/,
-  presets: ['@babel/env', '@babel/preset-react'],
-  plugins:['babel-plugin-typescript-to-proptypes']
+    babelrc: false,
+    extensions,
+    runtimeHelpers: true,
+    exclude: /node_modules/,
+    presets: ['@babel/env', '@babel/preset-react'],
 };
 
 const plugins = [
@@ -30,9 +29,7 @@ const plugins = [
         preventAssignment: true,
     }),
     external(),
-    scss(),
-    injectStyleFunctions(),
-
+    // babel(babelConfig),
     resolve(),
     commonjs({
         // include: 'node_modules/**',
@@ -60,19 +57,20 @@ const plugins = [
         tsconfig: './tsconfig.json',
         useTsconfigDeclarationDir: true,
     }),
-    babel(babelConfig),
-
+    scss({ output: false }),
+    injectStyleFunctions(),
 ]
 
 const subFolderPlugins = (folderName) => [
     ...plugins,
     generatePackageJson({
         baseContents: {
-            name: `${'namet'}/${folderName}`,
+            name: `reactLibraryName/${folderName}`,
             private: true,
-            main: '../cjs/index.js',
-            module: './index.js',
+            main: './index.cj.js',
+            module: './index.es.js',
             types: './index.d.ts',
+            browser: './index.umd.js'
         },
     }),
 ];
@@ -80,41 +78,59 @@ const folderBuilds = inputSrcs.map((folder) => {
     let outPut = folder.replace('./src','./')
     return {
         input: `${folder}/index.ts`,
-        output: {
-            file: `lib/esm/${outPut}/index.js`,
+        output: [{
+            file: `lib/esm/${outPut}/index.umd.js`,
             sourcemap: true,
-            exports: 'named',
-            format: 'esm',
+            name: folder,
+            format: 'umd',
+            globals:{
+                react: 'React',
+                'react-dom': 'ReactDOM',
+            }
         },
+            {
+                file: `lib/esm/${outPut}/index.es.js`,
+                sourcemap: true,
+                name: folder,
+                format: 'esm',
+            },
+            {
+                file: `lib/esm/${outPut}/index.cj.js`,
+                sourcemap: true,
+                name: folder,
+                format: 'cjs',
+            }],
+        exclude: /node_modules/,
         plugins: subFolderPlugins(folder),
         external: ['react', 'react-dom'],
     };
 });
 
 export default [
-  // {
-  //   input,
-  //   output: [{
-  //     file: 'lib/cjs/index.js',
-  //     format: "cjs",
-  //     sourcemap: true
-  //   },
-  //   {
-  //   file: 'lib/esm/index.es.js',
-  //   format: "esm",
-  //   sourcemap: true,
-  //   }
-  //   ],
-  //   plugins: [
-  //       ...plugins
-  //   ]
-  // },
+  {
+    input,
+    output: [{
+      file: 'lib/cjs/index.js',
+      format: "cjs",
+      sourcemap: true
+    },
+    {
+    file: 'lib/esm/index.es.js',
+    format: "esm",
+    sourcemap: true,
+    }
+    ],
+    plugins: [
+        ...plugins
+    ]
+  },
     ...folderBuilds,
 ];
 
 
 
 function injectStyleFunctions() {
+
   return {
     name: 'injectStyleFunctions',
     async transform(code, id) {
